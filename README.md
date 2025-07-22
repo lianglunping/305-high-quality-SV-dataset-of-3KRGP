@@ -1,22 +1,31 @@
-1. Overview
-This repository collects R scripts and shell launchers for genomic‑selection (GS) analysis based on the BWGS package.
+Below is a **bi‑lingual (English & Chinese)** README you can place in the root of the zip archive (`BWGS/README.md`).
+It explains the purpose of the package, folder layout, prerequisites, and quick‑start examples.
+
+---
+
+## BWGS Pipeline – README
+
+*Last update: 22 Jul 2025*
+
+### 1. Overview
+
+This repository collects **R scripts and shell launchers** for genomic‑selection (GS) analysis based on the **BWGS** package.
 Three marker strategies are supported:
 
-Folder	Description
-SNP/	SNP‑only workflows
-SV/	SV‑only workflows (raw / genic / intergenic subsets)
-Both/	Combined SNP + SV workflows
+| Folder  | Description                                          |
+| ------- | ---------------------------------------------------- |
+| `SNP/`  | SNP‑only workflows                                   |
+| `SV/`   | SV‑only workflows (raw / genic / intergenic subsets) |
+| `Both/` | Combined SNP + SV workflows                          |
 
 Each sub‑folder contains:
 
-One or more core R scripts (BWGS_with_*.R) that run 5‑fold × 10‑repeat cross‑validation on up to ten GS models (GBLUP, RF, EGBLUP, RR, BRR, LASSO, EN, BL, BB, RKHS).
+* One or more core **R scripts** (`BWGS_with_*.R`) that run 5‑fold × 10‑repeat cross‑validation on up to ten GS models (GBLUP, RF, EGBLUP, RR, BRR, LASSO, EN, BL, BB, RKHS).
+* **Shell wrappers** (`run_*.sh`) that set the working directory and call the corresponding R script for a specific GWAS filtering threshold (p < 0.05 / 0.01 / 0.001 or “whole” set).
 
-Shell wrappers (run_*.sh) that set the working directory and call the corresponding R script for a specific GWAS filtering threshold (p < 0.05 / 0.01 / 0.001 or “whole” set).
+### 2. Directory Structure
 
-2. Directory Structure
-bash
-复制
-编辑
+```
 BWGS/
 ├── Both/
 │   ├── BWGS_with_SV_and_SNP.R
@@ -51,24 +60,24 @@ BWGS/
 │   ├── run_305.sh                       # full pipeline launcher
 │   └── preprare.sh                      # helper for file preparation
 └── (Auxiliary .DS_Store / __MACOSX files may be ignored)
-3. Prerequisites
-R ≥ 4.1 with packages:
-pacman, bruceR, rrBLUP, BGLR, brnn, glmnet, e1071, randomForest, BWGS, argparse, data.table, dplyr, tidyr, purrr, GenomicRanges, rtracklayer
-(install once with install.packages() or pacman::p_load()).
+```
 
-A Unix‑like shell (bash/zsh) to execute the run_*.sh scripts.
+### 3. Prerequisites
 
-Input data placed under <workdir>/input/, typically:
+* **R ≥ 4.1** with packages:
+  `pacman, bruceR, rrBLUP, BGLR, brnn, glmnet, e1071, randomForest, BWGS, argparse, data.table, dplyr, tidyr, purrr, GenomicRanges, rtracklayer`
+  (install once with `install.packages()` or `pacman::p_load()`).
+* A Unix‑like shell (bash/zsh) to execute the `run_*.sh` scripts.
+* Input data placed under `<workdir>/input/`, typically:
 
-305_SV_Geno.RData / 305_SNP_Geno.RData
+  * `305_SV_Geno.RData` / `305_SNP_Geno.RData`
+  * `305_phe.RData` (phenotype matrix; sample IDs in first column)
+  * Trait list TXT (`trait.list.txt`)
+  * Pre‑computed GWAS result CSVs in `input/SV_GLM/` or `input/SNP_GLM/`
 
-305_phe.RData (phenotype matrix; sample IDs in first column)
+### 4. Quick Start
 
-Trait list TXT (trait.list.txt)
-
-Pre‑computed GWAS result CSVs in input/SV_GLM/ or input/SNP_GLM/
-
-4. Quick Start
+```bash
 # 1. Unzip and move into a workflow folder
 unzip BWGS.zip
 cd BWGS/SV
@@ -78,19 +87,20 @@ nano run_305_glm_filter_0.01.sh   # or any editor
 
 # 3. Launch the analysis
 bash run_305_glm_filter_0.01.sh
-Results appear in <workdir>/output/ as:
+```
 
-*_ModelName_ac.csv – CV results for each GS model
+Results appear in `<workdir>/output/` as:
 
-*_all_model_ac.csv – combined matrix
+* `*_ModelName_ac.csv` – CV results for each GS model
+* `*_all_model_ac.csv` – combined matrix
+* `glm_filtered_sv_0.01_counts.csv` – number of SVs kept per trait
 
-glm_filtered_sv_0.01_counts.csv – number of SVs kept per trait
+### 5. Customisation
 
-5. Customisation
-Modify BWGS_with_*.R scripts to change filters, heritability estimates, model list, or CV scheme.
+* Modify `BWGS_with_*.R` scripts to change filters, heritability estimates, model list, or CV scheme.
+* If running on HPC, wrap each `run_*.sh` in your scheduler’s job script.
 
-If running on HPC, wrap each run_*.sh in your scheduler’s job script.
+### 6. Contact
 
-6. Contact
-For questions please contact lunping.liang lunping98@gmail.com.
+For questions please contact **lunping.liang** [lunping98@gmail.com](mailto:lunping98@gmail.com).
 
