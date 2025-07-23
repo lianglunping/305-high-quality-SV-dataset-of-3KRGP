@@ -1,22 +1,23 @@
-Below is a **bi‑lingual (English & Chinese)** README you can place in the root of the zip archive (`BWGS/README.md`).
+Below is a README you can place in the root of the zip archive (`BWGS/README.md`).
 It explains the purpose of the package, folder layout, prerequisites, and quick‑start examples.
 
 ---
 
 ## BWGS Pipeline – README
 
-*Last update: 22 Jul 2025*
+*Last update: 23 Jul 2025
 
 ### 1. Overview
 
-This repository collects **R scripts and shell launchers** for genomic‑selection (GS) analysis based on the **BWGS** package.
+This repository collects **R pipelines (BWGS)** and **bash workflows** for rice genomic analysis.
 Three marker strategies are supported:
 
-| Folder  | Description                                          |
-| ------- | ---------------------------------------------------- |
-| `SNP/`  | SNP‑only workflows                                   |
-| `SV/`   | SV‑only workflows (raw / genic / intergenic subsets) |
-| `Both/` | Combined SNP + SV workflows                          |
+| Folder             | Description                                                                             |
+| ------------------ | --------------------------------------------------------------------------------------- |
+| `variant_calling/` | Stand‑alone bash scripts for **variant discovery** (SNP/INDEL with GATK; SV with Delly) |
+| `SNP/`             | SNP‑only GS workflows                                                                   |
+| `SV/`              | SV‑only GS workflows (raw / genic / intergenic)                                         |
+| `Both/`            | Combined SNP + SV GS workflows                                                          
 
 Each sub‑folder contains:
 
@@ -27,6 +28,9 @@ Each sub‑folder contains:
 
 ```
 BWGS/
+├── variant_calling/
+│   ├── snp_calling.sh          # fastp → BWA → GATK Best Practice
+│   └── sv_calling_delly.sh     # two‑pass Delly + bcftools merge/filter
 ├── Both/
 │   ├── BWGS_with_SV_and_SNP.R
 │   ├── BWGS_with_SV_and_SNP_glm_0.01.R
@@ -63,7 +67,9 @@ BWGS/
 ```
 
 ### 3. Prerequisites
-
+* **snp\_calling.sh** requires `fastp`, `bwa`, `samtools`, `sambamba`, `gatk 4`.
+* **sv\_calling\_delly.sh** requires `delly ≥ 0.9.1`, `bcftools`, `parallel`.
+* Provide a text file `samples.txt` (one sample ID per line) and place cleaned/marked BAMs (for SV) or raw FASTQ (for SNP) as directed in each script header.
 * **R ≥ 4.1** with packages:
   `pacman, bruceR, rrBLUP, BGLR, brnn, glmnet, e1071, randomForest, BWGS, argparse, data.table, dplyr, tidyr, purrr, GenomicRanges, rtracklayer`
   (install once with `install.packages()` or `pacman::p_load()`).
@@ -76,7 +82,30 @@ BWGS/
   * Pre‑computed GWAS result CSVs in `input/SV_GLM/` or `input/SNP_GLM/`
 
 ### 4. Quick Start
+For Variant calling
 
+```bash
+# 1. Edit paths & THREADS at top of each script
+nano variant_calling/snp_calling.sh
+nano variant_calling/sv_calling_delly.sh
+
+# 2. Make executable
+chmod +x variant_calling/*.sh
+
+# 3. Run SNP/INDEL pipeline
+./variant_calling/snp_calling.sh
+
+# 4. Run SV pipeline (Delly)
+./variant_calling/sv_calling_delly.sh
+
+# ➜ Results
+#   SNP/INDEL: <WORKDIR>/02.VCF/raw/filtered_*.vcf.gz
+#   SV:        <WORKDIR>/SV/step05.filter/germline.pass.vcf
+```
+
+
+
+For BWGS
 ```bash
 # 1. Unzip and move into a workflow folder
 unzip BWGS.zip
