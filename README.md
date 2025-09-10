@@ -1,7 +1,3 @@
-Below is a README you can place in the root of the zip archive (`BWGS/README.md`).
-It explains the purpose of the package, folder layout, prerequisites, and quick‑start examples.
-
----
 
 ## BWGS Pipeline – README
 
